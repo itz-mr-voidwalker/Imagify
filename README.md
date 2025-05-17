@@ -1,4 +1,4 @@
-## Imagify 🚀✨
+# Imagify 🚀✨
 > Imagify — Because converting images is everyone's dream job, right? 🙄🎨
 
 ## About 🤷‍♂️
