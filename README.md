@@ -13,7 +13,7 @@ Supports all those fancy formats you pretend to know about: PNG, JPEG, WEBP, ICO
 
 - Transparency fix — JPEG hates alpha channels like your we hate school. We handle that drama. 💔➡️🤝
 
-- Compression so tight, your images go on a serious diet—file size drops like it's hot, but quality stays chill.
+- 🗜️Compression so tight, your images go on a serious diet 🥗—file size drops like it's hot 🔥, but quality stays chill 😎
 
 - Fallback to PNG — If it fails, fallback like a pro. No shame. 😎
 
