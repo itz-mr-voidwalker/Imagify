@@ -83,7 +83,7 @@ class ImagifyApp(ctk.CTk):
 
         self.dest_label = ctk.CTkLabel(
             self.card_frame,
-            text="Destination",
+            text="Select Format",
             font=ctk.CTkFont(family="Segoe UI", size=14),
             text_color=self.colors["label_text"]
         )
@@ -149,7 +149,8 @@ class ImagifyApp(ctk.CTk):
             logging.error(f"File dialog failed: {e}")
             messagebox.showerror("Oops!", f"Failed to open file dialog. Here's why: {e}")
             return
-
+        
+                    
         if filenames:
             self.selected_image_paths = list(filenames)
             self.select_image_button.configure(text="Images Selected")
@@ -161,6 +162,7 @@ class ImagifyApp(ctk.CTk):
         """Convert your precious images because who doesn't want more file formats?"""
         self.submit_button.configure(text="Converting...", state="disabled")
 
+
         if not self.selected_image_paths:
             messagebox.showwarning(
                 "No images selected", 
@@ -170,13 +172,23 @@ class ImagifyApp(ctk.CTk):
             self.submit_button.configure(text="Convert", state="normal")
             return
 
+        cnfrm = messagebox.askyesno("Confirmation", f"You have selected {len(self.selected_image_paths)} images.\n Are you Sure to Proceed?")
+        if not cnfrm:
+            self.select_image_button.configure(text="Select Images")
+            self.submit_button.configure(text="Convert", state="normal")
+            return
+        
+        compress = messagebox.askyesno("Confirmation", f"Do You want to Compress At the same time?\nNote: Compressing PNG converted images will not result as expected")
+        print(compress)
+        
         selected_format = self.format_var.get().lower()
         logging.info(f"Starting conversion to {selected_format.upper()}")
 
         try:
-            success = self.convert_images(selected_format)
+            success = self.convert_images(compress,selected_format)
             if success:
                 messagebox.showinfo("Conversion Success", f"Images have been converted to {selected_format.upper()} format.")
+                os.startfile(rf"C:\Users\{os.getlogin()}\Pictures\Imagify")
             else:
                 messagebox.showerror("Conversion Failed", "Something went terribly wrong. Check the logs for details.")
         except Exception as e:
@@ -186,7 +198,7 @@ class ImagifyApp(ctk.CTk):
         self.select_image_button.configure(text="Select Images")
         self.submit_button.configure(text="Convert", state="normal")
 
-    def convert_images(self, selected_format: str) -> bool:
+    def convert_images(self,compress: bool, selected_format: str) -> bool:
         """Convert images to your chosen format, handling transparency because JPEG hates it."""
         # Flag to detect if at least one image converted successfully
         any_success = False
@@ -210,7 +222,10 @@ class ImagifyApp(ctk.CTk):
                 # Attempt saving with fallback encodings for tricky formats
                 save_format = "JPEG" if selected_format == "jpg" else selected_format.upper()
                 try:
-                    image.save(output_path, save_format)
+                    if compress:
+                        image.save(output_path, format=save_format, optimize=True, quality=50)
+                    else:
+                        image.save(output_path, save_format)
                 except OSError as e:
                     # Some formats may fail with certain parameters, try saving as PNG fallback
                     logging.warning(f"Failed saving {filename} as {save_format}, trying PNG fallback: {e}")
